@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply antialiased selection:bg-primary-500/20 selection:text-primary-600;
+  }
+}
+
+/* Glassmorphism custom classes */
+.glass-card {
+  @apply bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border border-white/40 dark:border-slate-800/40 rounded-3xl shadow-sm transition-all duration-300;
+}
+
+.glass-nav {
+  @apply bg-white/75 dark:bg-slate-950/75 backdrop-blur-lg border-r border-slate-100 dark:border-slate-900/60;
+}
+
+/* Smooth Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-200 dark:bg-slate-800 rounded-full hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors;
+}
+
+/* SweetAlert2 Theme Adjustments */
+.swal2-popup {
+  @apply bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-100 dark:border-slate-800 text-slate-800 dark:text-slate-100 !important;
+}
+.swal2-title {
+  @apply text-slate-800 dark:text-white !important;
+}
+.swal2-html-container {
+  @apply text-slate-500 dark:text-slate-400 !important;
+}
+
+/* Custom Utilities */
+.text-gradient {
+  @apply bg-gradient-to-r from-primary-600 to-indigo-600 bg-clip-text text-transparent dark:from-primary-400 dark:to-indigo-400;
+}
