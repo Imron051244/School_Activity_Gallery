@@ -222,6 +222,17 @@ export default function UploadModal({
   const onFormSubmit = async (data) => {
     try {
       if (type === 'album') {
+        Swal.fire({
+          title: 'กำลังสร้างอัลบั้มกิจกรรม...',
+          text: 'กำลังตั้งค่าระบบและเปิดโฟลเดอร์สำหรับจัดเก็บรูปภาพในระบบคลาวด์',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+          customClass: {
+            popup: 'rounded-3xl font-sans text-sm',
+          }
+        });
         await onSubmit({
           title: data.title,
           category: data.category,
@@ -231,6 +242,17 @@ export default function UploadModal({
           cover_image: previewImage || ''
         });
       } else if (type === 'edit-album') {
+        Swal.fire({
+          title: 'กำลังบันทึกการแก้ไข...',
+          text: 'กำลังปรับปรุงข้อมูลในฐานข้อมูลแผ่นงาน',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+          customClass: {
+            popup: 'rounded-3xl font-sans text-sm',
+          }
+        });
         await onSubmit(initialData.id, {
           title: data.title,
           category: data.category,
@@ -251,15 +273,45 @@ export default function UploadModal({
           return;
         }
 
-        const promises = previewImages.map(img => 
-          onSubmit(data.album_id || selectedAlbumId, {
+        Swal.fire({
+          title: 'กำลังอัปโหลดรูปภาพกิจกรรม...',
+          html: `กำลังเตรียมความพร้อมในการอัปโหลดภาพ (0/${previewImages.length})`,
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+          customClass: {
+            popup: 'rounded-3xl font-sans text-sm',
+          }
+        });
+
+        // อัปโหลดเรียงลำดับทีละรูปภาพเพื่อป้องกันปัญหา Race Conditions (อัปโหลดข้อมูลไม่เข้า) ในชีต
+        for (let i = 0; i < previewImages.length; i++) {
+          const img = previewImages[i];
+          Swal.update({
+            html: `กำลังอัปโหลดรูปภาพที่ <strong>${i + 1}</strong> จาก <strong>${previewImages.length}</strong> ภาพ<br/><span class="text-[11px] text-slate-400">กรุณาอย่าปิดหน้าจอหรือเปลี่ยนหน้าต่างนี้</span>`
+          });
+          
+          await onSubmit(data.album_id || selectedAlbumId, {
             caption: data.caption || '',
             photographer: '',
             fileBase64: img.base64,
             fileName: img.name,
-          })
-        );
-        await Promise.all(promises);
+            isBatch: true
+          });
+        }
+        
+        Swal.close();
+        Swal.fire({
+          title: 'อัปโหลดสำเร็จ!',
+          text: `นำเข้าภาพถ่ายกิจกรรมทั้งหมดจำนวน ${previewImages.length} รูปภาพเรียบร้อยแล้ว`,
+          icon: 'success',
+          confirmButtonText: 'ตกลง',
+          confirmButtonColor: '#10b981',
+          customClass: {
+            popup: 'rounded-3xl font-sans text-sm',
+          }
+        });
       }
 
       reset();
@@ -268,6 +320,12 @@ export default function UploadModal({
       onClose();
     } catch (err) {
       console.error('Submit error:', err);
+      Swal.fire({
+        title: 'เกิดข้อผิดพลาด!',
+        text: err.message || 'ไม่สามารถบันทึกข้อมูลได้สำเร็จ',
+        icon: 'error',
+        confirmButtonColor: '#ef4444',
+      });
     }
   };
 

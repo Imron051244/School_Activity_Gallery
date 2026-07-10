@@ -148,13 +148,15 @@ function AppContent() {
       qc.invalidateQueries({ queryKey: ['photos', variables.albumId] });
       qc.invalidateQueries({ queryKey: ['albums'] });
       qc.invalidateQueries({ queryKey: ['allPhotos'] });
-      Swal.fire({
-        title: 'อัปโหลดสำเร็จ!',
-        text: 'ภาพกิจกรรมถูกจัดเก็บลงในระบบเรียบร้อยแล้ว',
-        icon: 'success',
-        confirmButtonText: 'ตกลง',
-        confirmButtonColor: '#10b981',
-      });
+      if (!variables.photoData?.isBatch) {
+        Swal.fire({
+          title: 'อัปโหลดสำเร็จ!',
+          text: 'ภาพกิจกรรมถูกจัดเก็บลงในระบบเรียบร้อยแล้ว',
+          icon: 'success',
+          confirmButtonText: 'ตกลง',
+          confirmButtonColor: '#10b981',
+        });
+      }
     },
     onError: (error) => {
       Swal.fire({ title: 'เกิดข้อผิดพลาด', text: error.message, icon: 'error', confirmButtonColor: '#f43f5e' });

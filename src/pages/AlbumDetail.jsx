@@ -112,8 +112,22 @@ export default function AlbumDetail({ onOpenUploadModal }) {
   // ================= MUTATIONS สำหรับการลบ =================
 
   // 1. ลบอัลบั้ม
+  // 1. ลบอัลบั้ม
   const deleteAlbumMutation = useMutation({
     mutationFn: () => apiService.deleteAlbum(albumId),
+    onMutate: () => {
+      Swal.fire({
+        title: 'กำลังลบอัลบั้มกิจกรรม...',
+        text: 'ระบบกำลังดำเนินการลบข้อมูลแถวและโฟลเดอร์บนคลาวด์',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+        customClass: {
+          popup: 'rounded-3xl font-sans text-sm',
+        }
+      });
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['albums'] });
       qc.invalidateQueries({ queryKey: ['allPhotos'] });
@@ -135,6 +149,19 @@ export default function AlbumDetail({ onOpenUploadModal }) {
   // 2. ลบรูปภาพที่เลือก (Bulk Delete)
   const deletePhotosMutation = useMutation({
     mutationFn: (ids) => apiService.deletePhotos(ids),
+    onMutate: () => {
+      Swal.fire({
+        title: 'กำลังลบรูปภาพกิจกรรม...',
+        text: 'ระบบกำลังดำเนินการลบไฟล์จาก Drive และแถวจากแผ่นงาน',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+        customClass: {
+          popup: 'rounded-3xl font-sans text-sm',
+        }
+      });
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['photos', albumId] });
       qc.invalidateQueries({ queryKey: ['albums'] });
